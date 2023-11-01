@@ -40,6 +40,7 @@ const removeContact = async (contactId) => {
     }
     const newContacts = contacts.filter((item) => item.id !== contactId);
     await fs.writeFile(contactsPath, JSON.stringify(newContacts, null, 2));
+    console.log("Contact removed");
     return newContacts;
   } catch (error) {
     console.error(`Deleting contact error : ${error}`);
@@ -58,7 +59,7 @@ const addContact = async (body) => {
     contacts.push(newContact);
 
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
+    console.log("Contact added");
     return newContact;
   } catch (error) {
     console.error(`Adding contact error: ${error.message}`);
@@ -81,6 +82,7 @@ const updateContact = async (contactId, body) => {
     contacts[index] = updatedContact;
 
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    console.log("Contact updated");
     return updatedContact;
   } catch (error) {
     console.error(`Editing contact error: ${error.message}`);
