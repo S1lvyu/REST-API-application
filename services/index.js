@@ -28,29 +28,21 @@ const updateContactStatus = async (id, data) => {
   return Contact.findByIdAndUpdate(id, data, { new: true });
 };
 const createUser = async ({ email, password }) => {
-  try {
-    const newUser = new User({ email, password });
-    newUser.setPassword(password);
+  const newUser = new User({ email, password });
+  newUser.setPassword(password);
 
-    return await newUser.save();
-  } catch (error) {
-    throw error;
-  }
+  return await newUser.save();
 };
 const loginUser = async ({ email, password, token }) => {
-  try {
-    const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-    if (!user || !user.validPassword(password)) {
-      throw new Error("Wrong email or password");
-    }
-
-    user.setToken(token);
-    await user.save();
-    return user;
-  } catch (error) {
-    throw error;
+  if (!user || !user.validPassword(password)) {
+    throw new Error("Wrong email or password");
   }
+
+  user.setToken(token);
+  await user.save();
+  return user;
 };
 
 const findAccount = async (user) => {

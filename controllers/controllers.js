@@ -139,10 +139,6 @@ const createAccount = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    console.log(email);
-
-    const payload = { email: email };
-
     const result = await createUser({
       email,
       password,
@@ -164,10 +160,7 @@ const createAccount = async (req, res, next) => {
         status: 400,
         error: "Missing email or password",
       });
-    } else if (
-      error.message ===
-      'E11000 duplicate key error collection: db-contacts.users index: email_1 dup key: { email: "example@example.com" }'
-    ) {
+    } else {
       res.status(409).json({
         status: 409,
         error: "email in use",
