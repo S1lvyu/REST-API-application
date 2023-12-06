@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
-const contactsRouter = require("./routes/api/contacts.js");
+const contactsRouter = require("../src/routes/api/contacts.js");
 require("./middlewares/passportConfig.js");
 const app = express();
 
