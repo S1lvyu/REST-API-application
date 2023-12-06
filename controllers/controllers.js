@@ -10,6 +10,9 @@ const {
   findAccount,
 } = require("../services/index.js");
 const jwt = require("jsonwebtoken");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 const secret = process.env.SECRET;
 const get = async (req, res, next) => {
@@ -327,6 +330,50 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
+const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(404).json({ error: "No avatar to upload" });
+    }
+
+    const fileName = `${req.user._id}-${Date.now()}${path.extname(
+      req.file.originalname
+    )}`;
+
+    const tmpFolderPath = path.join(__dirname, "../tmp");
+    const destinationFolderPath = path.join(__dirname, `../public/avatars`);
+    const destinationPath = path.join(destinationFolderPath, fileName);
+
+    if (!fs.existsSync(tmpFolderPath)) {
+      fs.mkdirSync(tmpFolderPath);
+    }
+
+    await Jimp.read(req.file.path)
+      .then((image) => {
+        return image
+          .resize(250, 250)
+          .writeAsync(tmpFolderPath + "/" + fileName);
+      })
+      .then(() => {
+        fs.renameSync(tmpFolderPath + "/" + fileName, destinationPath);
+
+        fs.unlinkSync(req.file.path);
+      })
+      .catch((error) => {
+        throw error;
+      });
+
+    req.user.avatarURL = `http://localhost:3000/avatars/${fileName}`;
+
+    await req.user.save();
+
+    res.status(200).json({ avatarURL: req.user.avatarURL });
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+    next(error);
+  }
+};
+
 module.exports = {
   get,
   getById,
@@ -339,4 +386,5 @@ module.exports = {
   logoutAccount,
   getAccount,
   updateSubscription,
+  uploadAvatar,
 };
