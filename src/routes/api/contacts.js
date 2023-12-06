@@ -23,6 +23,11 @@ router.post("/users/login", controller.loginAccount);
 router.get("/users/logout", controller.logoutAccount);
 
 router.get("/users/current", controller.getAccount);
+router.get(
+  "/users/verify/:verificationToken",
+  controller.verifyEmailController
+);
+router.post("/users/verify", controller.verifyUserController);
 
 router.patch("/users", auth, controller.updateSubscription);
 

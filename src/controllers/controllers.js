@@ -8,6 +8,8 @@ const {
   createUser,
   loginUser,
   findAccount,
+  verifyEmail,
+  verifyUser,
 } = require("../services/index.js");
 const jwt = require("jsonwebtoken");
 const Jimp = require("jimp");
@@ -373,7 +375,35 @@ const uploadAvatar = async (req, res, next) => {
     next(error);
   }
 };
+const verifyEmailController = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
 
+    await verifyEmail(verificationToken);
+
+    res.status(200).json({ message: "Verification successful", code: 200 });
+  } catch (error) {
+    res.status(404).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+const verifyUserController = async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    await verifyUser(email);
+    res.status(200).json({
+      status: 200,
+      message: "Verification email sent",
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   get,
   getById,
@@ -387,4 +417,6 @@ module.exports = {
   getAccount,
   updateSubscription,
   uploadAvatar,
+  verifyEmailController,
+  verifyUserController,
 };
